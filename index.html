@@ -6,6 +6,8 @@
   <style>
     body {
       font: 10px sans-serif;
+       background-image: url("https://www.mchdata.com/images/default-background.jpg");
+  
     }
     
     .axis path,
@@ -24,12 +26,14 @@
       stroke: steelblue;
       stroke-width: 1.5px;
     }
-  </style>
+   
+   </style>
 </head>
 
 <body>
+
   <script>
-    var myData = "date	New York	San Francisco	Austin\n\
+    var myData = "date	Tesla	Apple	Costco\n\
 20111001	63.4	62.7	72.2\n\
 20111002	58.0	59.9	67.7\n\
 20111003	53.3	59.1	69.4\n\
@@ -86,7 +90,7 @@
         return x(d.date);
       })
       .y(function(d) {
-        return y(d.temperature);
+        return y(d.stock_value);
       });
 
     var svg = d3.select("body").append("svg")
@@ -105,13 +109,13 @@
       d.date = parseDate(d.date);
     });
 
-    var cities = color.domain().map(function(name) {
+    var Company = color.domain().map(function(name) {
       return {
         name: name,
         values: data.map(function(d) {
           return {
             date: d.date,
-            temperature: +d[name]
+            stock_value: +d[name]
           };
         })
       };
@@ -122,20 +126,20 @@
     }));
 
     y.domain([
-      d3.min(cities, function(c) {
+      d3.min(Company, function(c) {
         return d3.min(c.values, function(v) {
-          return v.temperature;
+          return v.stock_value;
         });
       }),
-      d3.max(cities, function(c) {
+      d3.max(Company, function(c) {
         return d3.max(c.values, function(v) {
-          return v.temperature;
+          return v.stock_value;
         });
       })
     ]);
 
     var legend = svg.selectAll('g')
-      .data(cities)
+      .data(Company)
       .enter()
       .append('g')
       .attr('class', 'legend');
@@ -173,10 +177,10 @@
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Temperature (ºF)");
+      .text("Stock Value ($)");
 
     var city = svg.selectAll(".city")
-      .data(cities)
+      .data(Company)
       .enter().append("g")
       .attr("class", "city");
 
@@ -197,7 +201,7 @@
         };
       })
       .attr("transform", function(d) {
-        return "translate(" + x(d.value.date) + "," + y(d.value.temperature) + ")";
+        return "translate(" + x(d.value.date) + "," + y(d.value.stock_value) + ")";
       })
       .attr("x", 3)
       .attr("dy", ".35em")
@@ -217,7 +221,7 @@
     var lines = document.getElementsByClassName('line');
 
     var mousePerLine = mouseG.selectAll('.mouse-per-line')
-      .data(cities)
+      .data(Company)
       .enter()
       .append("g")
       .attr("class", "mouse-per-line");
@@ -293,6 +297,7 @@
       });
       
   </script>
+
 </body>
 
 </html>
